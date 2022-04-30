@@ -1,12 +1,19 @@
-import { useState } from 'react';
-import { Button } from 'antd';
+import React from 'react';
+import styles from './App.module.less';
+import Header from './layout/header';
+import Slider from './layout/slider';
+import Main from './layout/main';
 
-function App() {
+const App: React.FC = () => {
   return (
-    <div className="App">
-      <Button>click</Button>
+    <div className={styles.app}>
+      <Slider></Slider>
+      <div className={styles.layout}>
+        <Header></Header>
+        <Main></Main>
+      </div>
     </div>
   );
-}
+};
 
 export default App;
