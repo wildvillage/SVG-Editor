@@ -3,6 +3,7 @@ import styles from './index.module.less';
 import { ExpandOutlined } from '@ant-design/icons';
 import { setting } from '../../settings/action';
 import { InputNumber, Form } from 'antd';
+import logo from '../../assets/logo.png'
 
 type PropKey = 'default' | 'geometric' | 'notGeometric'
 const current = 'circle';
@@ -28,7 +29,9 @@ const Slider: React.FC = () => {
     <div className={styles.slider}>
       <div className={styles.logo}>
         <ExpandOutlined style={{ fontSize: '20px' }} />
-        <span className={styles.title}>svg editor</span>
+        <span className={styles.title}>
+          <img className={styles['logo-img']} src={logo } />
+        </span>
       </div>
       <div className={styles['action-area']}>
         {actions.map((item, i) => {

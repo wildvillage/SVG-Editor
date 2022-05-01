@@ -1,7 +1,7 @@
 import React from "react";
 import ReactDOM from "react-dom/client";
 import App from "./page/App";
-import "./index.css";
+import "./styles/index.less";
 import 'normalize.css';
 import "antd/dist/antd.css";
 
