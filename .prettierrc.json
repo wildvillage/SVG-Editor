@@ -4,7 +4,7 @@
   "endOfLine": "lf",
   "htmlWhitespaceSensitivity": "css",
   "insertPragma": false,
-  "jsxBracketSameLine": false,
+  "bracketSameLine": true,
   "jsxSingleQuote": false,
   "printWidth": 80,
   "proseWrap": "preserve",
@@ -15,6 +15,6 @@
   "tabWidth": 2,
   "trailingComma": "es5",
   "useTabs": false,
-  "parser": "babel",
+  "parser": "typescript",
   "embeddedLanguageFormatting": "off"
 }

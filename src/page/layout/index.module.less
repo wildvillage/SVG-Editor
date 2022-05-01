@@ -61,9 +61,26 @@
 }
 
 .main{
+  position: relative;
   width:100%;
   height:calc(100% - 60px);
-  position:relative;
+  padding: 1.5rem;
+  .scale {
+    position: absolute;
+    background-color: #c7dbc250;
+    svg {
+      width: 100%;
+      height: 100%;
+    }
+  }
+  .scaleTop {
+    top: 0;
+    width: calc(100% - 3rem);
+    height: 18px;
+  }
+  .scaleLeft {
+    left: 0;
+    height: calc(100% - 3rem);
+    width: 18px;
+  }
 }
-
-

@@ -21,14 +21,14 @@ function CodeModal(props: CodeModalProps) {
       onOk={handleClick}
       onCancel={handleClick}
       className={styles.modal}
-    >
+      okText="确定">
       <CodePanel code={code} />
     </Modal>
   );
 }
 
 const CodePanel = memo(({ code }: CodePanelProps) => {
-  const codeString = useMemo(() => {
+  const codeString = useMemo((): string => {
     return Prism.highlight(code, Prism.languages.svg, 'Markup');
   }, [code]);
 
@@ -42,7 +42,7 @@ const CodePanel = memo(({ code }: CodePanelProps) => {
         <img
           src={copy}
           alt="copy"
-          className={`${styles.copy} copy`}
+          className={styles.copy}
           data-clipboard-text={code}
         />
       </Tooltip>

@@ -6,6 +6,7 @@ module.exports = {
   extends: [
     'eslint:recommended',
     'plugin:react/recommended',
+    'react-hooks',
     'plugin:@typescript-eslint/recommended',
     'prettier',
   ],
@@ -18,5 +19,7 @@ module.exports = {
     sourceType: 'module',
   },
   plugins: ['react', '@typescript-eslint'],
-  rules: {},
+  rules: {
+    'no-console': 2,
+  },
 };
