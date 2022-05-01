@@ -1,8 +1,10 @@
 import React, { useState } from 'react';
-import styles from './index.module.less';
-import { Button } from 'antd';
+import cls from 'classnames';
+import { Button, Input, Tooltip } from 'antd';
 import { CodeOutlined } from '@ant-design/icons';
 import CodeModal from '../../components/codeModal';
+import { DEFAULT_FILE_NAME } from '../../index';
+import styles from './index.module.less';
 
 // eslint-disable-next-line @typescript-eslint/no-inferrable-types
 const mockCode: string = `
@@ -17,7 +19,9 @@ const mockCode: string = `
 `;
 
 const Header: React.FC = () => {
-  const [modalVisible, setModalVisible] = useState(false);
+  const [modalVisible, setModalVisible] = useState<boolean>(false);
+  const [fileName, setFileName] = useState<string>(DEFAULT_FILE_NAME);
+  const [nameInputFlag, setNameInputFlag] = useState<boolean>(false);
 
   const setVisible = (visible: boolean) => {
     setModalVisible(visible);
@@ -25,6 +29,28 @@ const Header: React.FC = () => {
 
   return (
     <div className={styles.header}>
+      <div className={styles.fileName}>
+        <Tooltip title="双击修改图形名" placement="bottomLeft">
+          <span
+            onDoubleClick={() => setNameInputFlag(true)}
+            className={cls({
+              [styles.visible]: !nameInputFlag,
+              [styles.hidden]: nameInputFlag,
+            })}>
+            {fileName}
+          </span>
+        </Tooltip>
+        <Input
+          value={fileName}
+          className={cls({
+            [styles.visible]: nameInputFlag,
+            [styles.hidden]: !nameInputFlag,
+          })}
+          onBlur={() => setNameInputFlag(false)}
+          onPressEnter={() => setNameInputFlag(false)}
+          onChange={(e) => setFileName(e.target.value)}
+        />
+      </div>
       <Button icon={<CodeOutlined />} onClick={() => setModalVisible(true)}>
         Code
       </Button>
