@@ -1,11 +1,11 @@
 import React from 'react';
 import styles from './index.module.less';
-import Store from '../store';
+import Tool from '../tool';
 
 const Header: React.FC = () => {
   return (
     <div className={styles.main}>
-      <Store></Store>
+      <Tool></Tool>
     </div>
   );
 };
