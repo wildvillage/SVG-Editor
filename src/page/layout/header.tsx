@@ -1,9 +1,10 @@
-import { useState } from 'react';
+import React, { useState } from 'react';
 import styles from './index.module.less';
 import { Button } from 'antd';
 import { CodeOutlined } from '@ant-design/icons';
 import CodeModal from '../../components/codeModal';
 
+// eslint-disable-next-line @typescript-eslint/no-inferrable-types
 const mockCode: string = `
   <svg xmlns="http://www.w3.org/2000/svg">
     <circle
@@ -15,7 +16,7 @@ const mockCode: string = `
   </svg>
 `;
 
-const Header = () => {
+const Header: React.FC = () => {
   const [modalVisible, setModalVisible] = useState(false);
 
   const setVisible = (visible: boolean) => {
