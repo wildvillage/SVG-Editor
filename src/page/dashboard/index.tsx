@@ -1,7 +1,9 @@
-import { useRef, useMemo, RefObject } from 'react';
+import { useRef, useMemo } from 'react';
 import { useDashboardSize } from '../../utils';
-import { SVG_XMLNS } from '../../index';
+import { generateSplitLine } from '../layout/utils';
+import { SVG_XMLNS, SCALE_STEP } from '../../index';
 import styles from './index.module.less';
+import { nanoid } from '@reduxjs/toolkit';
 
 function Dashboard() {
   const dashboard = useRef<HTMLDivElement>(null);
@@ -23,13 +25,27 @@ function SplitLine({ width, height }: { width: number; height: number }) {
   const splitLine = useMemo(() => {
     if (height && width) {
       const vertical = Math.ceil(width / 100);
-      // const scaleTopLine =
+      const verticalLine = generateSplitLine(
+        vertical * 5,
+        SCALE_STEP,
+        'vertical'
+      );
+
+      const horizontal = Math.ceil(height / 100);
+      const horizontalLine = generateSplitLine(
+        horizontal * 5,
+        SCALE_STEP,
+        'horizontal'
+      );
+      return [...verticalLine, ...horizontalLine];
     }
   }, [height, width]);
 
   return (
     <svg xmlns={SVG_XMLNS} className={styles.splitLine}>
-      asd
+      {splitLine?.map((line) => (
+        <line key={nanoid()} {...line} />
+      ))}
     </svg>
   );
 }
