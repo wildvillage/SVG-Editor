@@ -2,14 +2,13 @@ import React from 'react';
 import styles from './index.module.less';
 import { ExpandOutlined } from '@ant-design/icons';
 import { setting } from '../../settings/action';
-import { InputNumber } from 'antd';
-import { render } from 'react-dom';
+import { InputNumber, Form } from 'antd';
 
+type PropKey = 'default' | 'geometric' | 'notGeometric'
 const current = 'circle';
 
 const Slider: React.FC = () => {
   const currentSetting = setting[current];
-
   const actions = [
     {
       title: '几何位置',
@@ -17,7 +16,7 @@ const Slider: React.FC = () => {
     },
     {
       title: 'svg属性',
-      key: 'props',
+      key: 'geometric',
     },
     {
       title: '非几何属性',
@@ -33,7 +32,30 @@ const Slider: React.FC = () => {
       </div>
       <div className={styles['action-area']}>
         {actions.map((item, i) => {
-          return <div key={i} className={styles.card}></div>;
+          const props = currentSetting[item.key as PropKey];
+          const keys = Object.keys(props)
+          return (
+            <div key={i} className={styles.card}>
+              <Form name={item.key} size="small" labelCol={{ span: 8, offset: 0 }} colon={ false}>
+                {
+                  keys.map(key => { 
+                    return (
+                      <Form.Item
+                        key={key}
+                        label={
+                          <div className={styles.label}>
+                            {key }
+                          </div>
+                        }
+                      >
+                        <InputNumber></InputNumber>
+                      </Form.Item>
+                    )
+                  })
+                }
+              </Form>
+            </div>
+          );
         })}
       </div>
     </div>
