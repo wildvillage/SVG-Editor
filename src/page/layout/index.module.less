@@ -98,4 +98,50 @@
     height: calc(100% - 3rem);
     width: 18px;
   }
+
+  .tool {
+    position: absolute;
+    top: 1px;
+    left: 2px;
+    width: 20px;
+    height: 20px;
+    background-image: url(./breathLight.svg);
+    background-size: 20px 20px;
+    animation: breath 3s infinite;
+    cursor: pointer;
+  }
+  .toolContainer {
+    position: absolute;
+    left: 20px;
+    top: 20px;
+  }
+
+  .store {
+    position: absolute;
+    top: 1px;
+    right: 2px;
+    width: 20px;
+    height: 20px;
+    background-image: url(./breathLight.svg);
+    background-size: 20px 20px;
+    animation: breath 3s infinite;
+    cursor: pointer;
+  }
+  .ShoreContainer {
+    position: absolute;
+    right: 20px;
+    top: 20px;
+  }
+}
+
+@keyframes breath {
+  0% {
+    opacity: 1;
+  };
+  50% {
+    opacity: 0;
+  };
+  100% {
+    opacity: 1;
+  }
 }
