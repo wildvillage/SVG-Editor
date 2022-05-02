@@ -7,14 +7,13 @@ import { RootState } from '../../store';
 import DashBoard from '../dashboard';
 import { generateScaleLines } from './utils';
 import { SVG_XMLNS, SCALE_STEP } from '../../index';
+import Move from '../../components/moveWapper';
 import Tool from '../tool';
 import styles from './index.module.less';
 import 'animate.css';
-import Move from '../../components/moveWapper';
 
 const Header: React.FC = () => {
   const [showTool, setShowTool] = useState<boolean>(false);
-  const [showStore, setShowStore] = useState<boolean>(false);
 
   const size = useSelector((state: RootState) => state.position.size);
 
@@ -57,36 +56,15 @@ const Header: React.FC = () => {
           ))}
         </svg>
       </div>
-      {/* 画布 */}
-      <Move render={<Tool />} />
-      <DashBoard />
       {/* 左侧工具栏 */}
       <Tooltip title="工具栏">
         <div
           className={styles.tool}
           onClick={() => setShowTool(!showTool)}></div>
       </Tooltip>
-      {showTool && (
-        <div
-          className={cls(styles.toolContainer, 'animate__animated', {
-            animate__fadeInLeft: showTool,
-          })}>
-          <Move render={<Tool />} />
-        </div>
-      )}
-      {/* 右侧选项栏 */}
-      <Tooltip title="选项栏" placement="rightTop">
-        <div
-          className={styles.store}
-          onClick={() => setShowStore(!showStore)}></div>
-      </Tooltip>
-      {showStore && (
-        <div
-          className={cls(styles.ShoreContainer, 'animate__animated', {
-            animate__fadeInRight: showStore,
-          })}>
-        </div>
-      )}
+      {showTool && <Move render={<Tool />} />}
+      {/* 画布 */}
+      <DashBoard />
     </div>
   );
 };
