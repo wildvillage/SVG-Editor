@@ -1,6 +1,7 @@
 import React, { useMemo, useState } from 'react';
 import cls from 'classnames';
 import { nanoid } from 'nanoid';
+import { Tooltip } from 'antd';
 import { useSelector } from 'react-redux';
 import { RootState } from '../../store';
 import DashBoard from '../dashboard';
@@ -60,7 +61,11 @@ const Header: React.FC = () => {
       <Move render={<Tool />} />
       <DashBoard />
       {/* 左侧工具栏 */}
-      <div className={styles.tool} onClick={() => setShowTool(!showTool)}></div>
+      <Tooltip title="工具栏">
+        <div
+          className={styles.tool}
+          onClick={() => setShowTool(!showTool)}></div>
+      </Tooltip>
       {showTool && (
         <div
           className={cls(styles.toolContainer, 'animate__animated', {
@@ -70,9 +75,11 @@ const Header: React.FC = () => {
         </div>
       )}
       {/* 右侧选项栏 */}
-      <div
-        className={styles.store}
-        onClick={() => setShowStore(!showStore)}></div>
+      <Tooltip title="选项栏" placement="rightTop">
+        <div
+          className={styles.store}
+          onClick={() => setShowStore(!showStore)}></div>
+      </Tooltip>
       {showStore && (
         <div
           className={cls(styles.ShoreContainer, 'animate__animated', {
