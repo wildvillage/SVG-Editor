@@ -4,26 +4,22 @@ import { Divider } from 'antd';
 import {
   ArrowRightOutlined,
   BorderOutlined,
-  MenuOutlined,
+  NumberOutlined,
 } from '@ant-design/icons';
+
+const iconProps = {
+  style: { fontSize: '20px', color: '#999' },
+  className: 'hover',
+};
 
 const Tool: React.FC = () => {
   return (
     <div className={styles.tool}>
-      <ArrowRightOutlined
-        style={{ fontSize: '20px', color: '#999' }}
-        className="hover"
-      />
+      <ArrowRightOutlined {...iconProps} />
       <Divider type="vertical"></Divider>
-      <BorderOutlined
-        style={{ fontSize: '20px', color: '#999' }}
-        className="hover"
-      />
+      <BorderOutlined {...iconProps} />
       <Divider type="vertical"></Divider>
-      <MenuOutlined
-        style={{ fontSize: '20px', color: '#999' }}
-        className="hover"
-      />
+      <NumberOutlined {...iconProps} />
     </div>
   );
 };

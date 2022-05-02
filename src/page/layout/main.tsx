@@ -7,9 +7,9 @@ import DashBoard from '../dashboard';
 import { generateScaleLines } from './utils';
 import { SVG_XMLNS, SCALE_STEP } from '../../index';
 import Tool from '../tool';
-import Store from '../store';
 import styles from './index.module.less';
 import 'animate.css';
+import Move from '../../components/moveWapper';
 
 const Header: React.FC = () => {
   const [showTool, setShowTool] = useState<boolean>(false);
@@ -57,6 +57,7 @@ const Header: React.FC = () => {
         </svg>
       </div>
       {/* 画布 */}
+      <Move render={<Tool />} />
       <DashBoard />
       {/* 左侧工具栏 */}
       <div className={styles.tool} onClick={() => setShowTool(!showTool)}></div>
@@ -65,7 +66,7 @@ const Header: React.FC = () => {
           className={cls(styles.toolContainer, 'animate__animated', {
             animate__fadeInLeft: showTool,
           })}>
-          <Tool />
+          <Move render={<Tool />} />
         </div>
       )}
       {/* 右侧选项栏 */}
@@ -77,7 +78,6 @@ const Header: React.FC = () => {
           className={cls(styles.ShoreContainer, 'animate__animated', {
             animate__fadeInRight: showStore,
           })}>
-          <Store />
         </div>
       )}
     </div>
