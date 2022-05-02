@@ -30,7 +30,7 @@ const moveWapper: React.FC<MoveProps> = (props) => {
       currentLeft = 0,
       currentTop = 0,
     } = varible.current || {};
-    console.log(baseLeft, baseTop, currentLeft, currentTop);
+
     if (box.current) {
       box.current.style.left = e.pageX - (baseLeft + currentLeft) + 'px';
       box.current.style.top = e.pageY - (baseTop + currentTop) + 'px';

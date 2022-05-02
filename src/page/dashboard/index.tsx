@@ -1,6 +1,8 @@
 import { useRef, useMemo } from 'react';
 import { useDashboardSize } from '../../utils';
 import { generateSplitLine } from '../layout/utils';
+import { useSelector } from 'react-redux';
+import { RootState } from '../../store';
 import { SVG_XMLNS, SCALE_STEP } from '../../index';
 import styles from './index.module.less';
 import { nanoid } from '@reduxjs/toolkit';
@@ -9,13 +11,19 @@ function Dashboard() {
   const dashboard = useRef<HTMLDivElement>(null);
   useDashboardSize(dashboard);
 
+  const showSplitLine = useSelector(
+    (state: RootState) => state.tool.showSplitLine
+  );
+
   return (
     <div className={styles.dashboard} ref={dashboard}>
       {/* 网格线 */}
-      <SplitLine
-        width={dashboard.current?.offsetWidth as number}
-        height={dashboard.current?.offsetHeight as number}
-      />
+      {showSplitLine && (
+        <SplitLine
+          width={dashboard.current?.offsetWidth as number}
+          height={dashboard.current?.offsetHeight as number}
+        />
+      )}
       <svg xmlns={SVG_XMLNS}></svg>
     </div>
   );
