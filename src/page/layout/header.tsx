@@ -27,6 +27,13 @@ const Header: React.FC = () => {
     setModalVisible(visible);
   };
 
+  const onLeave = () => {
+    setNameInputFlag(false);
+    if (!fileName) {
+      setFileName(DEFAULT_FILE_NAME);
+    }
+  };
+
   return (
     <div className={styles.header}>
       <div className={styles.fileName}>
@@ -46,8 +53,8 @@ const Header: React.FC = () => {
             [styles.visible]: nameInputFlag,
             [styles.hidden]: !nameInputFlag,
           })}
-          onBlur={() => setNameInputFlag(false)}
-          onPressEnter={() => setNameInputFlag(false)}
+          onBlur={onLeave}
+          onPressEnter={onLeave}
           onChange={(e) => setFileName(e.target.value)}
         />
       </div>

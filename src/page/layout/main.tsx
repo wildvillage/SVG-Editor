@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react';
+import React, { useMemo, useState } from 'react';
 import cls from 'classnames';
 import { nanoid } from 'nanoid';
 import { useSelector } from 'react-redux';
@@ -6,20 +6,26 @@ import { RootState } from '../../store';
 import DashBoard from '../dashboard';
 import { generateScaleLines } from './utils';
 import { SVG_XMLNS, SCALE_STEP } from '../../index';
-import styles from './index.module.less';
 import Tool from '../tool';
+import Store from '../store';
+import styles from './index.module.less';
+import 'animate.css';
 
 const Header: React.FC = () => {
+  const [showTool, setShowTool] = useState<boolean>(false);
+  const [showStore, setShowStore] = useState<boolean>(false);
+
   const size = useSelector((state: RootState) => state.position.size);
 
   const scales = useMemo(() => {
     const { height, width } = size;
 
     if (height && width) {
-      const lineTop = Math.ceil(width / 100);
+      const SPACING: number = 100;
+      const lineTop = Math.ceil(width / SPACING);
       const scaleTopLine = generateScaleLines(lineTop * 5, SCALE_STEP, 'top');
 
-      const lineLeft = Math.ceil(height / 100);
+      const lineLeft = Math.ceil(height / SPACING);
       const scaleLeftLine = generateScaleLines(
         lineLeft * 5,
         SCALE_STEP,
@@ -52,6 +58,28 @@ const Header: React.FC = () => {
       </div>
       {/* 画布 */}
       <DashBoard />
+      {/* 左侧工具栏 */}
+      <div className={styles.tool} onClick={() => setShowTool(!showTool)}></div>
+      {showTool && (
+        <div
+          className={cls(styles.toolContainer, 'animate__animated', {
+            animate__fadeInLeft: showTool,
+          })}>
+          <Tool />
+        </div>
+      )}
+      {/* 右侧选项栏 */}
+      <div
+        className={styles.store}
+        onClick={() => setShowStore(!showStore)}></div>
+      {showStore && (
+        <div
+          className={cls(styles.ShoreContainer, 'animate__animated', {
+            animate__fadeInRight: showStore,
+          })}>
+          <Store />
+        </div>
+      )}
     </div>
   );
 };
