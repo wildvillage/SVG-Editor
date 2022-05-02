@@ -1,7 +1,7 @@
 import { useDispatch } from 'react-redux';
 import React, { useRef } from 'react';
-import { Divider } from 'antd';
 import { useDrag } from 'ahooks';
+import { Divider, Tooltip } from 'antd';
 import {
   ArrowRightOutlined,
   BorderOutlined,
@@ -26,14 +26,20 @@ const Tool: React.FC = () => {
   });
   return (
     <div className={styles.tool}>
-      <ArrowRightOutlined {...iconProps} ref={line} />
+      <Tooltip title="直线" placement="top">
+        <ArrowRightOutlined {...iconProps} ref={line} />
+      </Tooltip>
       <Divider type="vertical"></Divider>
-      <BorderOutlined {...iconProps} />
+      <Tooltip title="矩形" placement="top">
+        <BorderOutlined {...iconProps} />
+      </Tooltip>
       <Divider type="vertical"></Divider>
-      <NumberOutlined
-        {...iconProps}
-        onClick={() => dispatch(toggleSplitLine())}
-      />
+      <Tooltip title="点击显隐网格线" placement="top">
+        <NumberOutlined
+          {...iconProps}
+          onClick={() => dispatch(toggleSplitLine())}
+        />
+      </Tooltip>
     </div>
   );
 };

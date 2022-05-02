@@ -13,7 +13,7 @@ import styles from './index.module.less';
 import 'animate.css';
 
 const Header: React.FC = () => {
-  const [showTool, setShowTool] = useState<boolean>(false);
+  const [showTool, setShowTool] = useState<boolean>(true);
 
   const size = useSelector((state: RootState) => state.position.size);
 
@@ -60,7 +60,8 @@ const Header: React.FC = () => {
       <Tooltip title="工具栏">
         <div
           className={styles.tool}
-          onClick={() => setShowTool(!showTool)}></div>
+          onClick={() => setShowTool(!showTool)}
+        ></div>
       </Tooltip>
       {showTool && <Move render={<Tool />} />}
       {/* 画布 */}
