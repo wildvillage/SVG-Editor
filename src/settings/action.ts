@@ -35,4 +35,10 @@ export const setting = {
       color: '#fff',
     },
   },
+  line: {
+    default: {
+      length: 100,
+      stroke: 'red',
+    },
+  },
 };

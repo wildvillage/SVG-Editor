@@ -6,10 +6,43 @@ import { RootState } from '../../store';
 import { SVG_XMLNS, SCALE_STEP } from '../../index';
 import styles from './index.module.less';
 import { nanoid } from '@reduxjs/toolkit';
+import { useDrop, useSetState } from 'ahooks';
+import { setting } from '../../settings/action';
+import { calcPosition } from '../../utils';
+
+type State = {
+  line: any[];
+  circle: any[];
+};
 
 function Dashboard() {
   const dashboard = useRef<HTMLDivElement>(null);
+
+  const [svgData, setSvgData] = useSetState<State>({
+    line: [],
+    circle: [],
+  });
+
   useDashboardSize(dashboard);
+  const board = useRef(null);
+  useDrop(board, {
+    onText: (text, e: any) => {
+      if (text === '"line"') {
+        setSvgData((prev) => {
+          const { line } = prev;
+          const { default: _default } = setting.line;
+          const { x1, y1, x2, y2 } = calcPosition(
+            e.offsetX,
+            e.offsetY,
+            _default.length
+          );
+          return {
+            line: [...line, { x1, y1, x2, y2, stroke: _default.stroke }],
+          };
+        });
+      }
+    },
+  });
 
   const showSplitLine = useSelector(
     (state: RootState) => state.tool.showSplitLine
@@ -24,7 +57,20 @@ function Dashboard() {
           height={dashboard.current?.offsetHeight as number}
         />
       )}
-      <svg xmlns={SVG_XMLNS}></svg>
+
+      <svg xmlns={SVG_XMLNS} ref={board} id="board">
+        {Object.keys(svgData).map((item) => {
+          if (item === 'line') {
+            return svgData.line.map((ele, i) => {
+              return <line key={i} {...ele} />;
+            });
+          } else if (item === 'circle') {
+            return svgData.circle.map((ele, i) => {
+              return <circle key={i} {...ele} />;
+            });
+          }
+        })}
+      </svg>
     </div>
   );
 }
