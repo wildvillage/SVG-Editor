@@ -35,9 +35,23 @@ export const setting = {
       color: '#fff',
     },
   },
+  /** 直线 */
   line: {
     default: {
       length: 100,
+      stroke: 'red',
+    },
+  },
+  /** 矩形 */
+  rect: {
+    default: {
+      x: 100,
+      y: 100,
+      rx: 0,
+      ry: 0,
+      width: 100,
+      height: 50,
+      fill: 'transparent',
       stroke: 'red',
     },
   },

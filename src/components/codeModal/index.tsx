@@ -21,7 +21,9 @@ function CodeModal(props: CodeModalProps) {
       onOk={handleClick}
       onCancel={handleClick}
       className={styles.modal}
-      okText="确定">
+      okText="确定"
+      width="750px"
+    >
       <CodePanel code={code} />
     </Modal>
   );
@@ -29,7 +31,7 @@ function CodeModal(props: CodeModalProps) {
 
 const CodePanel = memo(({ code }: CodePanelProps) => {
   const codeString = useMemo((): string => {
-    return Prism.highlight(code, Prism.languages.svg, 'Markup');
+    return Prism.highlight(code!, Prism.languages.svg, 'Markup');
   }, [code]);
 
   useEffect(() => {
