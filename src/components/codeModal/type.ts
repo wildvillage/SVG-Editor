@@ -1,10 +1,10 @@
 export type CodeModalProps = {
-  visible: boolean,
+  visible: boolean;
   /** svg代码 */
-  code: string,
-  setVisible: (v: boolean) => void,
+  code: string | undefined;
+  setVisible: (v: boolean) => void;
 };
 
 export type CodePanelProps = {
-  code: string,
+  code: string | undefined;
 };

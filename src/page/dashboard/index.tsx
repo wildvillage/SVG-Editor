@@ -42,18 +42,16 @@ function Dashboard() {
         });
       }
       if (text === '"rect"') {
-        console.log(e);
         setSvgData((prev) => {
           const { rect } = prev;
           const { default: _default } = setting.rect;
-          const { offsetX, offsetY } = e;
           return {
             rect: [
               ...rect,
               {
                 ..._default,
-                x: offsetX,
-                y: offsetY,
+                x: e.offsetX,
+                y: e.offsetY,
               },
             ],
           };
