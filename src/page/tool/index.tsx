@@ -1,5 +1,5 @@
-import { useDispatch } from 'react-redux';
 import React, { useRef } from 'react';
+import { useDispatch } from 'react-redux';
 import { useDrag } from 'ahooks';
 import { Divider, Tooltip } from 'antd';
 import {
@@ -24,6 +24,14 @@ const Tool: React.FC = () => {
       console.log('开始拖动');
     },
   });
+
+  const rect = useRef(null);
+  useDrag('rect', rect, {
+    onDragStart: () => {
+      console.log('开始拖动');
+    },
+  });
+
   return (
     <div className={styles.tool}>
       <Tooltip title="直线" placement="top">
@@ -31,7 +39,7 @@ const Tool: React.FC = () => {
       </Tooltip>
       <Divider type="vertical"></Divider>
       <Tooltip title="矩形" placement="top">
-        <BorderOutlined {...iconProps} />
+        <BorderOutlined {...iconProps} ref={rect} />
       </Tooltip>
       <Divider type="vertical"></Divider>
       <Tooltip title="点击显隐网格线" placement="top">

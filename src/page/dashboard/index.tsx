@@ -5,14 +5,14 @@ import { useSelector } from 'react-redux';
 import { RootState } from '../../store';
 import { SVG_XMLNS, SCALE_STEP } from '../../index';
 import styles from './index.module.less';
-import { nanoid } from '@reduxjs/toolkit';
+import { nanoid } from 'nanoid';
 import { useDrop, useSetState } from 'ahooks';
 import { setting } from '../../settings/action';
 import { calcPosition } from '../../utils';
 
 type State = {
   line: any[];
-  circle: any[];
+  rect: any[];
 };
 
 function Dashboard() {
@@ -20,7 +20,7 @@ function Dashboard() {
 
   const [svgData, setSvgData] = useSetState<State>({
     line: [],
-    circle: [],
+    rect: [],
   });
 
   useDashboardSize(dashboard);
@@ -38,6 +38,24 @@ function Dashboard() {
           );
           return {
             line: [...line, { x1, y1, x2, y2, stroke: _default.stroke }],
+          };
+        });
+      }
+      if (text === '"rect"') {
+        console.log(e);
+        setSvgData((prev) => {
+          const { rect } = prev;
+          const { default: _default } = setting.rect;
+          const { offsetX, offsetY } = e;
+          return {
+            rect: [
+              ...rect,
+              {
+                ..._default,
+                x: offsetX,
+                y: offsetY,
+              },
+            ],
           };
         });
       }
@@ -64,9 +82,9 @@ function Dashboard() {
             return svgData.line.map((ele, i) => {
               return <line key={i} {...ele} />;
             });
-          } else if (item === 'circle') {
-            return svgData.circle.map((ele, i) => {
-              return <circle key={i} {...ele} />;
+          } else if (item === 'rect') {
+            return svgData.rect.map((ele, i) => {
+              return <rect key={i} {...ele} />;
             });
           }
         })}
