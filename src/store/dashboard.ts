@@ -1,14 +1,28 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { Dashboard } from './type';
+import { DashBoard } from './type';
 
-const initialState: Dashboard = {};
+const initialState: DashBoard = {
+  line: [],
+  rect: [],
+};
 
 export const dashboardSlice = createSlice({
-  name: 'position',
+  name: 'dashboard',
   initialState,
-  reducers: {},
+  reducers: {
+    getState(state) {
+      console.log(state.line);
+      return state;
+    },
+    setLine(state, { payload }: PayloadAction<DashBoard['line']>) {
+      state.line = payload;
+    },
+    setRect(state, { payload }: PayloadAction<DashBoard['rect']>) {
+      state.rect = payload;
+    },
+  },
 });
 
-export const {} = dashboardSlice.actions;
+export const { setRect, setLine, getState } = dashboardSlice.actions;
 
 export default dashboardSlice.reducer;

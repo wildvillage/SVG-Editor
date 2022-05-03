@@ -41,6 +41,19 @@ export const setting = {
       length: 100,
       stroke: 'red',
     },
+    position: {
+      top: 100,
+      left: 100,
+    },
+    geometric: {
+      x1: 100,
+      y1: 100,
+      x2: 100,
+      y2: 100,
+    },
+    notGeometric: {
+      stroke: 'red',
+    },
   },
   /** 矩形 */
   rect: {
