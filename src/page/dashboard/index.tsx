@@ -1,61 +1,45 @@
 import { useRef, useMemo } from 'react';
 import { useDashboardSize } from '../../utils';
 import { generateSplitLine } from '../layout/utils';
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import { RootState } from '../../store';
 import { SVG_XMLNS, SCALE_STEP } from '../../index';
 import styles from './index.module.less';
 import { nanoid } from 'nanoid';
-import { useDrop, useSetState } from 'ahooks';
+import { useDrop } from 'ahooks';
 import { setting } from '../../settings/action';
 import { calcPosition } from '../../utils';
-
-type State = {
-  line: any[];
-  rect: any[];
-};
+import { setLine, setRect } from '../../store/dashboard';
+import { setCurrentForm } from '../../store/tool';
 
 function Dashboard() {
   const dashboard = useRef<HTMLDivElement>(null);
-
-  const [svgData, setSvgData] = useSetState<State>({
-    line: [],
-    rect: [],
-  });
+  const dispatch = useDispatch();
+  const { line, rect } = useSelector((state: RootState) => state.dashboard);
 
   useDashboardSize(dashboard);
+
   const board = useRef(null);
+
   useDrop(board, {
     onText: (text, e: any) => {
       if (text === '"line"') {
-        setSvgData((prev) => {
-          const { line } = prev;
-          const { default: _default } = setting.line;
-          const { x1, y1, x2, y2 } = calcPosition(
-            e.offsetX,
-            e.offsetY,
-            _default.length
-          );
-          return {
-            line: [...line, { x1, y1, x2, y2, stroke: _default.stroke }],
-          };
-        });
+        const { default: _default } = setting.line;
+        const { x1, y1, x2, y2 } = calcPosition(
+          e.offsetX,
+          e.offsetY,
+          _default.length
+        );
+        dispatch(
+          setLine([...line, { x1, y1, x2, y2, stroke: _default.stroke }])
+        );
+        dispatch(setCurrentForm({ x1, y1, x2, y2, stroke: _default.stroke }));
       }
       if (text === '"rect"') {
-        setSvgData((prev) => {
-          const { rect } = prev;
-          const { default: _default } = setting.rect;
-          return {
-            rect: [
-              ...rect,
-              {
-                ..._default,
-                x: e.offsetX,
-                y: e.offsetY,
-              },
-            ],
-          };
-        });
+        const { default: _default } = setting.rect;
+        dispatch(
+          setRect([...rect, { ..._default, x: e.offsetX, y: e.offsetY }])
+        );
       }
     },
   });
@@ -75,17 +59,12 @@ function Dashboard() {
       )}
 
       <svg xmlns={SVG_XMLNS} ref={board} id="board">
-        {Object.keys(svgData).map((item) => {
-          if (item === 'line') {
-            return svgData.line.map((ele, i) => {
-              return <line key={i} {...ele} />;
-            });
-          } else if (item === 'rect') {
-            return svgData.rect.map((ele, i) => {
-              return <rect key={i} {...ele} />;
-            });
-          }
-        })}
+        {line.map((ele, i) => (
+          <line key={i} {...ele} />
+        ))}
+        {rect.map((ele, i) => (
+          <rect key={i} {...ele}></rect>
+        ))}
       </svg>
     </div>
   );
