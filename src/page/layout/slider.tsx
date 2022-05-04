@@ -1,34 +1,24 @@
-import React from 'react';
+import React, { useState } from 'react';
 import styles from './index.module.less';
 import { ExpandOutlined } from '@ant-design/icons';
-import { setting } from '../../settings/action';
+import { lineSetting, rectSetting } from '../../settings/action';
 import { InputNumber, Form, Input, Tooltip } from 'antd';
 import logo from '../../assets/logo.png';
 import Guide from '../../components/guide';
 import { useSelector, useDispatch } from 'react-redux';
 import { RootState } from '../../store';
 import { useUpdateEffect } from 'ahooks';
-import { setLine, setRect } from '../../store/dashboard';
+import { addSvg } from '../../store/dashboard';
+import { SvgType } from '../../store/type';
 
-type PropKey = 'default' | 'geometric' | 'notGeometric';
-
-const current = 'line';
-
-const InputType = ['color', 'fill'];
-const InputNumberType = [
-  'cx',
-  'cy',
-  'r',
-  'x1',
-  'x2',
-  'y1',
-  'y2',
-  'left',
-  'top',
-];
+const setting = {
+  line: lineSetting,
+  rect: rectSetting,
+};
 
 const Slider: React.FC = () => {
-  const currentSetting = setting[current];
+  const [svgType, setSvgType] = useState<SvgType>('line');
+  const currentSetting = (setting as any)[svgType];
   const position = currentSetting['position'];
   const geometric = currentSetting['geometric'];
   const notGeometric = currentSetting['notGeometric'];
@@ -36,14 +26,26 @@ const Slider: React.FC = () => {
   const [geometricForm] = Form.useForm();
   const [notGeometricForm] = Form.useForm();
   const { currentForm } = useSelector((state: RootState) => state.tool);
-  const { line, rect } = useSelector((state: RootState) => state.dashboard);
+  const { render } = useSelector((state: RootState) => state.dashboard);
 
   useUpdateEffect(() => {
-    const { x1, y1 } = currentForm;
-    notGeometricForm.setFieldsValue(currentForm);
-    geometricForm.setFieldsValue(currentForm);
-    positionForm.setFieldsValue({ top: y1, left: x1 });
-    console.log(currentForm);
+    const { attrs, type } = currentForm;
+    if (type === 'line') {
+      // 说明当前变化的是line类型
+      const { y1, x1 } = attrs as App.Line;
+      setSvgType('line');
+      notGeometricForm.setFieldsValue(attrs);
+      geometricForm.setFieldsValue(attrs);
+      positionForm.setFieldsValue({ top: y1, left: x1 });
+    } else if (type === 'rect') {
+      // 说明当前变化的是rect类型
+      const { x, y } = attrs as App.Rect;
+      setSvgType('rect');
+
+      notGeometricForm.setFieldsValue(attrs);
+      geometricForm.setFieldsValue(attrs);
+      positionForm.setFieldsValue({ top: y, left: x });
+    }
   }, [currentForm]);
 
   const dispatch = useDispatch();
@@ -51,9 +53,24 @@ const Slider: React.FC = () => {
   const formChange = () => {
     const geoForm = geometricForm.getFieldsValue();
     const notGeoForm = notGeometricForm.getFieldsValue();
-    const copy = Object.assign([], line);
-    copy.pop();
-    dispatch(setLine([...copy, Object.assign({}, geoForm, notGeoForm)]));
+    // const { top, left } = positionForm.getFieldsValue();
+    const { id, type } = currentForm;
+    const copy = Object.assign([], render);
+    const index = render.findIndex((item) => item.id === id);
+    if (type === 'line') {
+      copy.splice(index, 1, {
+        id,
+        type,
+        attrs: Object.assign({}, geoForm, notGeoForm),
+      });
+    } else if (type === 'rect') {
+      copy.splice(index, 1, {
+        id,
+        type,
+        attrs: Object.assign({}, geoForm, notGeoForm),
+      });
+    }
+    dispatch(addSvg(copy));
   };
   return (
     <div className={styles.slider}>
@@ -82,11 +99,7 @@ const Slider: React.FC = () => {
                       name={key}
                       label={<div className={styles.label}>{key}</div>}
                     >
-                      {InputNumberType.includes(key) ? (
-                        <InputNumber max={1000} min={0}></InputNumber>
-                      ) : (
-                        <Input size="small"></Input>
-                      )}
+                      <InputNumber max={1000} min={0}></InputNumber>
                     </Form.Item>
                   );
                 })}
@@ -108,11 +121,7 @@ const Slider: React.FC = () => {
                       name={key}
                       label={<div className={styles.label}>{key}</div>}
                     >
-                      {InputNumberType.includes(key) ? (
-                        <InputNumber max={1000} min={0}></InputNumber>
-                      ) : (
-                        <Input size="small"></Input>
-                      )}
+                      <InputNumber max={1000} min={0}></InputNumber>
                     </Form.Item>
                   );
                 })}
@@ -137,11 +146,7 @@ const Slider: React.FC = () => {
                         </Tooltip>
                       }
                     >
-                      {InputNumberType.includes(key) ? (
-                        <InputNumber max={1000} min={0}></InputNumber>
-                      ) : (
-                        <Input size="small"></Input>
-                      )}
+                      <Input size="small" type="color"></Input>
                     </Form.Item>
                   );
                 })}

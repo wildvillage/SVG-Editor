@@ -7,15 +7,16 @@ import { SVG_XMLNS, SCALE_STEP } from '../../index';
 import styles from './index.module.less';
 import { nanoid } from 'nanoid';
 import { useDrop } from 'ahooks';
-import { setting } from '../../settings/action';
+import { lineSetting, rectSetting } from '../../settings/action';
 import { calcPosition } from '../../utils';
-import { setLine, setRect } from '../../store/dashboard';
+import { addSvg } from '../../store/dashboard';
 import { setCurrentForm } from '../../store/tool';
 
 function Dashboard() {
   const dashboard = useRef<HTMLDivElement>(null);
+  const globalId = useRef<number>(1);
   const dispatch = useDispatch();
-  const { line, rect } = useSelector((state: RootState) => state.dashboard);
+  const { render } = useSelector((state: RootState) => state.dashboard);
 
   useDashboardSize(dashboard);
 
@@ -24,23 +25,51 @@ function Dashboard() {
   useDrop(board, {
     onText: (text, e: any) => {
       if (text === '"line"') {
-        const { default: _default } = setting.line;
+        const { default: _default } = lineSetting;
         const { x1, y1, x2, y2 } = calcPosition(
           e.offsetX,
           e.offsetY,
           _default.length
         );
         dispatch(
-          setLine([...line, { x1, y1, x2, y2, stroke: _default.stroke }])
+          addSvg([
+            ...render,
+            {
+              id: globalId.current,
+              type: 'line',
+              attrs: { x1, y1, x2, y2, stroke: _default.stroke },
+            },
+          ])
         );
-        dispatch(setCurrentForm({ x1, y1, x2, y2, stroke: _default.stroke }));
+        dispatch(
+          setCurrentForm({
+            id: globalId.current,
+            type: 'line',
+            attrs: { x1, y1, x2, y2, stroke: _default.stroke },
+          })
+        );
       }
       if (text === '"rect"') {
-        const { default: _default } = setting.rect;
+        const { default: _default } = rectSetting;
         dispatch(
-          setRect([...rect, { ..._default, x: e.offsetX, y: e.offsetY }])
+          addSvg([
+            ...render,
+            {
+              id: globalId.current,
+              type: 'rect',
+              attrs: { ..._default, x: e.offsetX, y: e.offsetY },
+            },
+          ])
+        );
+        dispatch(
+          setCurrentForm({
+            id: globalId.current,
+            type: 'rect',
+            attrs: { ..._default, x: e.offsetX, y: e.offsetY },
+          })
         );
       }
+      globalId.current++;
     },
   });
 
@@ -59,12 +88,13 @@ function Dashboard() {
       )}
 
       <svg xmlns={SVG_XMLNS} ref={board} id="board">
-        {line.map((ele, i) => (
-          <line key={i} {...ele} />
-        ))}
-        {rect.map((ele, i) => (
-          <rect key={i} {...ele}></rect>
-        ))}
+        {render.map(({ id, type, attrs }) => {
+          if (type === 'line') {
+            return <line key={id} {...attrs} />;
+          } else {
+            return <rect key={id} {...attrs} />;
+          }
+        })}
       </svg>
     </div>
   );

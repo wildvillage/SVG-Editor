@@ -5,7 +5,7 @@ export const generateScaleLines = (
   step: number,
   type: 'top' | 'left'
 ): ScaleConfig[] => {
-  const STROKE = '#0007';
+  const STROKE = '#007';
   if (type === 'top') {
     return new Array(scale).fill(null).map((item, idx) => {
       return {
