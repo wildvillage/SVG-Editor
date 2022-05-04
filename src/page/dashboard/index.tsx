@@ -107,7 +107,15 @@ function Dashboard() {
         />
       )}
 
-      <svg xmlns={SVG_XMLNS} ref={board} id="board">
+      <svg
+        xmlns={SVG_XMLNS}
+        width={dashboard.current?.offsetWidth}
+        height={dashboard.current?.offsetHeight}
+        // 保留viewBox，之后会用到
+        // viewBox={`0 0 ${dashboard.current?.offsetWidth} ${dashboard.current?.offsetHeight}`}
+        ref={board}
+        id="board"
+      >
         {render.map(({ id, type, attrs }) => {
           if (type === 'line') {
             return <line key={id} {...attrs} />;
