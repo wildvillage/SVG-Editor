@@ -81,7 +81,7 @@ const Slider: React.FC = () => {
         </span>
       </div>
       <div className={styles['action-area']}>
-        {currentSetting && (
+        {currentSetting && render.length ? (
           <>
             <div className={styles.card}>
               <Form
@@ -153,9 +153,9 @@ const Slider: React.FC = () => {
               </Form>
             </div>
           </>
-        )}
+        ) : null}
         {/* 操作导航 */}
-        {!currentSetting && <Guide />}
+        {!render.length && <Guide />}
       </div>
     </div>
   );
