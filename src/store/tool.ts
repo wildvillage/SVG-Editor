@@ -3,7 +3,17 @@ import { Tool } from './type';
 
 const initialState: Tool = {
   showSplitLine: true,
-  currentForm: {},
+  currentForm: {
+    id: 1,
+    attrs: {
+      x1: 10,
+      x2: 10,
+      y1: 10,
+      y2: 10,
+      stroke: '#000',
+    },
+    type: 'line',
+  },
 };
 
 export const dashboardSlice = createSlice({
