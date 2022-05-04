@@ -50,25 +50,53 @@ const Slider: React.FC = () => {
 
   const dispatch = useDispatch();
 
-  const formChange = () => {
+  const formChange = (form: any) => {
     const geoForm = geometricForm.getFieldsValue();
     const notGeoForm = notGeometricForm.getFieldsValue();
-    // const { top, left } = positionForm.getFieldsValue();
+    const { top, left } = positionForm.getFieldsValue();
+
     const { id, type } = currentForm;
     const copy = Object.assign([], render);
     const index = render.findIndex((item) => item.id === id);
+    const { attrs } = render.find((item) => item.id === id) || { attrs: null };
     if (type === 'line') {
-      copy.splice(index, 1, {
-        id,
-        type,
-        attrs: Object.assign({}, geoForm, notGeoForm),
-      });
+      if (form.top || form.left) {
+        if (attrs) {
+          const { x1, y1, x2, y2 } = attrs as App.Line; // 原来的
+          const chax2 = left - x1,
+            chay2 = top - y1;
+          copy.splice(index, 1, {
+            id,
+            type,
+            attrs: Object.assign({}, notGeoForm, {
+              x1: left,
+              y1: top,
+              x2: x2 + chax2,
+              y2: y2 + chay2,
+            }),
+          });
+        }
+      } else {
+        copy.splice(index, 1, {
+          id,
+          type,
+          attrs: Object.assign({}, geoForm, notGeoForm),
+        });
+      }
     } else if (type === 'rect') {
-      copy.splice(index, 1, {
-        id,
-        type,
-        attrs: Object.assign({}, geoForm, notGeoForm),
-      });
+      if (form.top || form.left) {
+        copy.splice(index, 1, {
+          id,
+          type,
+          attrs: Object.assign({}, geoForm, notGeoForm, { x: left, y: top }),
+        });
+      } else {
+        copy.splice(index, 1, {
+          id,
+          type,
+          attrs: Object.assign({}, geoForm, notGeoForm),
+        });
+      }
     }
     dispatch(addSvg(copy));
   };
@@ -88,7 +116,7 @@ const Slider: React.FC = () => {
                 size="small"
                 labelCol={{ span: 8, offset: 0 }}
                 colon={false}
-                onChange={formChange}
+                onValuesChange={formChange}
                 form={positionForm}
               >
                 {Object.keys(position).map((key) => {
