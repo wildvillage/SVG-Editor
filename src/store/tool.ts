@@ -14,6 +14,7 @@ const initialState: Tool = {
     },
     type: 'line',
   },
+  showSelector: false,
 };
 
 export const dashboardSlice = createSlice({
@@ -26,9 +27,13 @@ export const dashboardSlice = createSlice({
     setCurrentForm(state, { payload }) {
       state.currentForm = payload;
     },
+    setSelector(state, { payload }: PayloadAction<Tool['showSelector']>) {
+      state.showSelector = payload;
+    },
   },
 });
 
-export const { toggleSplitLine, setCurrentForm } = dashboardSlice.actions;
+export const { toggleSplitLine, setCurrentForm, setSelector } =
+  dashboardSlice.actions;
 
 export default dashboardSlice.reducer;
