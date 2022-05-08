@@ -6,7 +6,7 @@ import { RootState } from '../../store';
 import { SVG_XMLNS, SCALE_STEP } from '../../index';
 import styles from './index.module.less';
 import { nanoid } from 'nanoid';
-import { useDrop } from 'ahooks';
+import { useDrop, useEventListener } from 'ahooks';
 import { lineSetting, rectSetting } from '../../settings/action';
 import { calcPosition } from '../../utils';
 import { addSvg } from '../../store/dashboard';
@@ -97,6 +97,47 @@ function Dashboard() {
     },
   });
 
+  useEventListener('click', (e: Event) => {
+    const id = (e.target as SVGAElement).id;
+    if (id) {
+      const t = render.find((item) => item.id === parseInt(id));
+      if (t) {
+        const { type, attrs } = t;
+
+        if (type === 'rect') {
+          const { x, y, width, height } = attrs as App.Rect;
+          setTagAttr({
+            width,
+            height,
+            x,
+            y,
+          });
+          dispatch(
+            setCurrentForm({
+              id,
+              type: 'rect',
+              attrs,
+            })
+          );
+        } else if (type === 'line') {
+          const { x1, x2, y1, y2 } = attrs as App.Line;
+          setTagAttr({
+            width: Math.abs(x1 - x2),
+            height: Math.abs(y1 - y2),
+            x: x1,
+            y: y1,
+          });
+          dispatch(
+            setCurrentForm({
+              id,
+              type: 'line',
+              attrs,
+            })
+          );
+        }
+      }
+    }
+  });
   return (
     <div className={styles.dashboard} ref={dashboard}>
       {/* 网格线 */}
@@ -118,9 +159,22 @@ function Dashboard() {
       >
         {render.map(({ id, type, attrs }) => {
           if (type === 'line') {
-            return <line key={id} {...attrs} />;
+            const { x1, y1, x2 } = attrs as App.Line;
+            const rectAttrs = {
+              x: x1,
+              y: y1 - 10,
+              width: x2 - x1,
+              height: 20,
+              fill: 'transparent',
+            };
+            return (
+              <>
+                <line key={id} {...attrs} id={id + ''} />
+                <rect key={id + 'rect'} id={id + ''} {...rectAttrs} />
+              </>
+            );
           } else {
-            return <rect key={id} {...attrs} />;
+            return <rect key={id} {...attrs} id={id + ''} />;
           }
         })}
         {showSelector && <Selector {...tagAttr} />}
