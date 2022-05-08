@@ -20,16 +20,12 @@ const Tool: React.FC = () => {
 
   const line = useRef(null);
   useDrag('line', line, {
-    onDragStart: () => {
-      console.log('开始拖动');
-    },
+    onDragStart: () => {},
   });
 
   const rect = useRef(null);
   useDrag('rect', rect, {
-    onDragStart: () => {
-      console.log('开始拖动');
-    },
+    onDragStart: () => {},
   });
 
   return (

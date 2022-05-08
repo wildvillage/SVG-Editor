@@ -19,6 +19,7 @@ const setting = {
 const Slider: React.FC = () => {
   const [svgType, setSvgType] = useState<SvgType>('line');
   const currentSetting = (setting as any)[svgType];
+
   const position = currentSetting['position'];
   const geometric = currentSetting['geometric'];
   const notGeometric = currentSetting['notGeometric'];
@@ -41,7 +42,6 @@ const Slider: React.FC = () => {
       // 说明当前变化的是rect类型
       const { x, y } = attrs as App.Rect;
       setSvgType('rect');
-
       notGeometricForm.setFieldsValue(attrs);
       geometricForm.setFieldsValue(attrs);
       positionForm.setFieldsValue({ top: y, left: x });
