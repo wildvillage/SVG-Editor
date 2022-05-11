@@ -1,17 +1,15 @@
 import { useRef, useMemo, useState, Fragment } from 'react';
-import { useDashboardSize } from '../../utils';
+import { useDashboardSize, calcPosition } from '../../utils';
 import { generateSplitLine } from '../layout/utils';
 import { useSelector, useDispatch } from 'react-redux';
 import { RootState } from '../../store';
 import { SVG_XMLNS, SCALE_STEP } from '../../index';
-import styles from './index.module.less';
 import { nanoid } from 'nanoid';
 import { useDrop, useEventListener } from 'ahooks';
-import { lineSetting, rectSetting } from '../../settings/action';
-import { calcPosition } from '../../utils';
-import { addSvg } from '../../store/dashboard';
-import { setCurrentForm, setSelector } from '../../store/tool';
+import { setCurrentForm } from '../../store/tool';
+import { addSvgTag } from './utils';
 import { SelectorProps } from './type';
+import styles from './index.module.less';
 
 const defaultSelectorProps = {
   width: 0,
@@ -34,65 +32,7 @@ function Dashboard() {
 
   useDrop(board, {
     onText: (text, e: any) => {
-      if (text === '"line"') {
-        const { default: _default } = lineSetting;
-        const { x1, y1, x2, y2 } = calcPosition(
-          e.offsetX,
-          e.offsetY,
-          _default.length
-        );
-        dispatch(
-          addSvg([
-            ...render,
-            {
-              id: globalId.current,
-              type: 'line',
-              attrs: { x1, y1, x2, y2, stroke: _default.stroke },
-            },
-          ])
-        );
-        dispatch(
-          setCurrentForm({
-            id: globalId.current,
-            type: 'line',
-            attrs: { x1, y1, x2, y2, stroke: _default.stroke },
-          })
-        );
-        setTagAttr({
-          width: Math.abs(x1 - x2),
-          height: Math.abs(y1 - y2),
-          x: e.offsetX,
-          y: e.offsetY,
-        });
-        dispatch(setSelector(true));
-      }
-      if (text === '"rect"') {
-        const { default: _default } = rectSetting;
-        dispatch(
-          addSvg([
-            ...render,
-            {
-              id: globalId.current,
-              type: 'rect',
-              attrs: { ..._default, x: e.offsetX, y: e.offsetY },
-            },
-          ])
-        );
-        dispatch(
-          setCurrentForm({
-            id: globalId.current,
-            type: 'rect',
-            attrs: { ..._default, x: e.offsetX, y: e.offsetY },
-          })
-        );
-        setTagAttr({
-          width: _default.width,
-          height: _default.height,
-          x: e.offsetX,
-          y: e.offsetY,
-        });
-        dispatch(setSelector(true));
-      }
+      addSvgTag(text, e, globalId, render, setTagAttr, dispatch);
       globalId.current++;
     },
   });
@@ -138,6 +78,7 @@ function Dashboard() {
       }
     }
   });
+
   return (
     <div className={styles.dashboard} ref={dashboard}>
       {/* 网格线 */}
