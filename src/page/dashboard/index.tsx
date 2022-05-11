@@ -1,4 +1,4 @@
-import { useRef, useMemo, useState } from 'react';
+import { useRef, useMemo, useState, Fragment } from 'react';
 import { useDashboardSize } from '../../utils';
 import { generateSplitLine } from '../layout/utils';
 import { useSelector, useDispatch } from 'react-redux';
@@ -168,10 +168,10 @@ function Dashboard() {
               fill: 'transparent',
             };
             return (
-              <>
-                <line key={id} {...attrs} id={id + ''} />
-                <rect key={id + 'rect'} id={id + ''} {...rectAttrs} />
-              </>
+              <Fragment key={id}>
+                <line {...attrs} id={id + ''} />
+                <rect id={id + ''} {...rectAttrs} />
+              </Fragment>
             );
           } else {
             return <rect key={id} {...attrs} id={id + ''} />;
