@@ -6,7 +6,8 @@ import { RootState } from '../../store';
 import { SVG_XMLNS, SCALE_STEP } from '../../index';
 import { nanoid } from 'nanoid';
 import { useDrop, useEventListener } from 'ahooks';
-import { setCurrentForm } from '../../store/tool';
+import { setCurrentForm, setSelector } from '../../store/tool';
+import { removeRenderItem } from '../../store/dashboard';
 import { addSvgTag } from './utils';
 import { SelectorProps } from './type';
 import styles from './index.module.less';
@@ -25,7 +26,7 @@ function Dashboard() {
   const board = useRef(null);
   useDashboardSize(dashboard);
   const { render } = useSelector((state: RootState) => state.dashboard);
-  const { showSplitLine, showSelector } = useSelector(
+  const { showSplitLine, showSelector, currentForm } = useSelector(
     (state: RootState) => state.tool
   );
   const dispatch = useDispatch();
@@ -59,6 +60,7 @@ function Dashboard() {
               attrs,
             })
           );
+          dispatch(setSelector(true));
         } else if (type === 'line') {
           const { x1, x2, y1, y2 } = attrs as App.Line;
           setTagAttr({
@@ -74,8 +76,19 @@ function Dashboard() {
               attrs,
             })
           );
+          dispatch(setSelector(true));
         }
       }
+    }
+  });
+
+  // 监听键盘事件，移除选中的图形
+  useEventListener('keydown', (e: KeyboardEvent) => {
+    const { code } = e;
+    // 按下删除键并且当前选中框存在时，才执行remove操作
+    if (code === 'Backspace' && showSelector && e.target === document.body) {
+      dispatch(removeRenderItem(Number(currentForm.id)));
+      dispatch(setSelector(false));
     }
   });
 
