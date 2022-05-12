@@ -1,4 +1,6 @@
 import { ScaleConfig } from './type';
+import { RenderItem } from '../../store/type';
+import { SVG_XMLNS } from '../../index';
 
 export const generateScaleLines = (
   scale: number,
@@ -60,4 +62,35 @@ export const generateSplitLine = (
       };
     });
   }
+};
+
+export const generateSvgCode = (render: RenderItem[]): string => {
+  let svgCode = '';
+  render.forEach((r) => {
+    const { type, attrs } = r;
+    const attrsStr = Object.keys(attrs)
+      // @ts-ignore
+      .map((key) => `${key}="${attrs[key]}"`)
+      .join(' ');
+
+    switch (type) {
+      case 'line':
+        svgCode += `<line ${attrsStr}/>`;
+        break;
+      case 'rect':
+        svgCode += `<rect ${attrsStr}/>`;
+        break;
+      default:
+        svgCode += '';
+    }
+  });
+  const dashboard = document.getElementById('board');
+  const width = dashboard?.clientWidth;
+  const height = dashboard?.clientHeight;
+
+  return (
+    `<svg xmlns="${SVG_XMLNS}" width="${width}" height="${height}">` +
+    svgCode +
+    `</svg>`
+  );
 };

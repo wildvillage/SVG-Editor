@@ -1,17 +1,16 @@
-import { useRef, useMemo, useState } from 'react';
-import { useDashboardSize } from '../../utils';
+import { useRef, useMemo, useState, Fragment } from 'react';
+import { useDashboardSize, calcPosition } from '../../utils';
 import { generateSplitLine } from '../layout/utils';
 import { useSelector, useDispatch } from 'react-redux';
 import { RootState } from '../../store';
 import { SVG_XMLNS, SCALE_STEP } from '../../index';
-import styles from './index.module.less';
 import { nanoid } from 'nanoid';
 import { useDrop, useEventListener } from 'ahooks';
-import { lineSetting, rectSetting } from '../../settings/action';
-import { calcPosition } from '../../utils';
-import { addSvg } from '../../store/dashboard';
 import { setCurrentForm, setSelector } from '../../store/tool';
+import { removeRenderItem } from '../../store/dashboard';
+import { addSvgTag } from './utils';
 import { SelectorProps } from './type';
+import styles from './index.module.less';
 
 const defaultSelectorProps = {
   width: 0,
@@ -27,72 +26,14 @@ function Dashboard() {
   const board = useRef(null);
   useDashboardSize(dashboard);
   const { render } = useSelector((state: RootState) => state.dashboard);
-  const { showSplitLine, showSelector } = useSelector(
+  const { showSplitLine, showSelector, currentForm } = useSelector(
     (state: RootState) => state.tool
   );
   const dispatch = useDispatch();
 
   useDrop(board, {
     onText: (text, e: any) => {
-      if (text === '"line"') {
-        const { default: _default } = lineSetting;
-        const { x1, y1, x2, y2 } = calcPosition(
-          e.offsetX,
-          e.offsetY,
-          _default.length
-        );
-        dispatch(
-          addSvg([
-            ...render,
-            {
-              id: globalId.current,
-              type: 'line',
-              attrs: { x1, y1, x2, y2, stroke: _default.stroke },
-            },
-          ])
-        );
-        dispatch(
-          setCurrentForm({
-            id: globalId.current,
-            type: 'line',
-            attrs: { x1, y1, x2, y2, stroke: _default.stroke },
-          })
-        );
-        setTagAttr({
-          width: Math.abs(x1 - x2),
-          height: Math.abs(y1 - y2),
-          x: e.offsetX,
-          y: e.offsetY,
-        });
-        dispatch(setSelector(true));
-      }
-      if (text === '"rect"') {
-        const { default: _default } = rectSetting;
-        dispatch(
-          addSvg([
-            ...render,
-            {
-              id: globalId.current,
-              type: 'rect',
-              attrs: { ..._default, x: e.offsetX, y: e.offsetY },
-            },
-          ])
-        );
-        dispatch(
-          setCurrentForm({
-            id: globalId.current,
-            type: 'rect',
-            attrs: { ..._default, x: e.offsetX, y: e.offsetY },
-          })
-        );
-        setTagAttr({
-          width: _default.width,
-          height: _default.height,
-          x: e.offsetX,
-          y: e.offsetY,
-        });
-        dispatch(setSelector(true));
-      }
+      addSvgTag(text, e, globalId, render, setTagAttr, dispatch);
       globalId.current++;
     },
   });
@@ -119,6 +60,7 @@ function Dashboard() {
               attrs,
             })
           );
+          dispatch(setSelector(true));
         } else if (type === 'line') {
           const { x1, x2, y1, y2 } = attrs as App.Line;
           setTagAttr({
@@ -134,10 +76,22 @@ function Dashboard() {
               attrs,
             })
           );
+          dispatch(setSelector(true));
         }
       }
     }
   });
+
+  // 监听键盘事件，移除选中的图形
+  useEventListener('keydown', (e: KeyboardEvent) => {
+    const { code } = e;
+    // 按下删除键并且当前选中框存在时，才执行remove操作
+    if (code === 'Backspace' && showSelector && e.target === document.body) {
+      dispatch(removeRenderItem(Number(currentForm.id)));
+      dispatch(setSelector(false));
+    }
+  });
+
   return (
     <div className={styles.dashboard} ref={dashboard}>
       {/* 网格线 */}
@@ -168,10 +122,10 @@ function Dashboard() {
               fill: 'transparent',
             };
             return (
-              <>
-                <line key={id} {...attrs} id={id + ''} />
-                <rect key={id + 'rect'} id={id + ''} {...rectAttrs} />
-              </>
+              <Fragment key={id}>
+                <line {...attrs} id={id + ''} />
+                <rect id={id + ''} {...rectAttrs} />
+              </Fragment>
             );
           } else {
             return <rect key={id} {...attrs} id={id + ''} />;

@@ -20,9 +20,13 @@ export const dashboardSlice = createSlice({
     addSvg(state, { payload }: PayloadAction<DashBoard['render']>) {
       state.render = payload;
     },
+    removeRenderItem(state, { payload }: PayloadAction<number>) {
+      state.render = state.render.filter((r) => r.id !== payload);
+    },
   },
 });
 
-export const { setRect, setLine, addSvg } = dashboardSlice.actions;
+export const { setRect, setLine, addSvg, removeRenderItem } =
+  dashboardSlice.actions;
 
 export default dashboardSlice.reducer;

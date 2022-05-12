@@ -12,7 +12,10 @@
     background-color: #1f1f1f;
     max-height: 500px;
     overflow: scroll;
-    text-overflow: ellipsis;
+    &::-webkit-scrollbar {
+      width: 0;
+      height: 0;
+    }
 
     .copy {
       position: absolute;
