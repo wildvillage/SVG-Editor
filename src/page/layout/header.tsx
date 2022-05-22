@@ -5,7 +5,7 @@ import { CodeOutlined } from '@ant-design/icons';
 import CodeModal from '../../components/codeModal';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '../../store';
-import { generateSvgCode } from './utils';
+import { generateSvgCode } from './helper';
 import { setSelector } from '../../store/tool';
 import { DEFAULT_FILE_NAME } from '../../index';
 import styles from './index.module.less';

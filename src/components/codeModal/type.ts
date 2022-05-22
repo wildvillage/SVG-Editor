@@ -5,6 +5,4 @@ export type CodeModalProps = {
   setVisible: (v: boolean) => void;
 };
 
-export type CodePanelProps = {
-  code: string | undefined;
-};
+export type CodePanelProps = Pick<CodeModalProps, 'code'>;

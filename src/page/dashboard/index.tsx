@@ -1,6 +1,6 @@
 import { useRef, useMemo, useState, Fragment } from 'react';
 import { useDashboardSize, calcPosition } from '../../utils';
-import { generateSplitLine } from '../layout/utils';
+import { generateSplitLine } from '../layout/helper';
 import { useSelector, useDispatch } from 'react-redux';
 import { RootState } from '../../store';
 import { SVG_XMLNS, SCALE_STEP } from '../../index';

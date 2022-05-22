@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import styles from './index.module.less';
 import { ExpandOutlined } from '@ant-design/icons';
 import { lineSetting, rectSetting } from '../../settings/action';
 import { InputNumber, Form, Input, Tooltip } from 'antd';
@@ -10,6 +9,7 @@ import { RootState } from '../../store';
 import { useUpdateEffect } from 'ahooks';
 import { addSvg } from '../../store/dashboard';
 import { SvgType } from '../../store/type';
+import styles from './index.module.less';
 
 const setting = {
   line: lineSetting,
@@ -28,6 +28,7 @@ const Slider: React.FC = () => {
   const [notGeometricForm] = Form.useForm();
   const { currentForm } = useSelector((state: RootState) => state.tool);
   const { render } = useSelector((state: RootState) => state.dashboard);
+  const dispatch = useDispatch();
 
   useUpdateEffect(() => {
     const { attrs, type } = currentForm;
@@ -47,8 +48,6 @@ const Slider: React.FC = () => {
       positionForm.setFieldsValue({ top: y, left: x });
     }
   }, [currentForm]);
-
-  const dispatch = useDispatch();
 
   const formChange = (form: any) => {
     const geoForm = geometricForm.getFieldsValue();
@@ -100,6 +99,7 @@ const Slider: React.FC = () => {
     }
     dispatch(addSvg(copy));
   };
+
   return (
     <div className={styles.slider}>
       <div className={styles.logo}>

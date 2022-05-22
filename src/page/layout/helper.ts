@@ -2,6 +2,7 @@ import { ScaleConfig } from './type';
 import { RenderItem } from '../../store/type';
 import { SVG_XMLNS } from '../../index';
 
+/** 生成刻度尺 */
 export const generateScaleLines = (
   scale: number,
   step: number,
@@ -33,6 +34,7 @@ export const generateScaleLines = (
   }
 };
 
+/** 生成网格线 */
 export const generateSplitLine = (
   split: number,
   step: number,
@@ -64,6 +66,7 @@ export const generateSplitLine = (
   }
 };
 
+/** 通过 render 生成svg代码 */
 export const generateSvgCode = (render: RenderItem[]): string => {
   let svgCode = '';
   render.forEach((r) => {
