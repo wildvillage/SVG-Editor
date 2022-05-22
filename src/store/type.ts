@@ -14,7 +14,7 @@ export type RenderItem = {
 };
 
 export type DashBoard = {
-  line: App.Line[];
-  rect: App.Rect[];
+  line?: App.Line[];
+  rect?: App.Rect[];
   render: RenderItem[];
 };

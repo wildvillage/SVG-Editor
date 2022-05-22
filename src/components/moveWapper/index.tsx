@@ -16,13 +16,12 @@ type PostionInfo = {
   currentTop?: number;
 };
 
-export const useMove = () => {};
-
 const moveWapper: React.FC<MoveProps> = (props) => {
   const { render, children } = props;
   const drag = useRef<HTMLDivElement>(null);
   const box = useRef<HTMLDivElement>(null);
   const varible = useRef<PostionInfo>({});
+
   const move = (e: MouseEvent) => {
     const {
       baseLeft = 0,
@@ -30,23 +29,27 @@ const moveWapper: React.FC<MoveProps> = (props) => {
       currentLeft = 0,
       currentTop = 0,
     } = varible.current || {};
-    if (box.current) {
-      box.current.style.left = e.pageX - (baseLeft + currentLeft) + 'px';
-      box.current.style.top = e.pageY - (baseTop + currentTop) + 'px';
+    const boxDom = box.current;
+    if (boxDom) {
+      const style = boxDom.style;
+      style.left = e.pageX - (baseLeft + currentLeft) + 'px';
+      style.top = e.pageY - (baseTop + currentTop) + 'px';
     }
   };
 
   useEffect(() => {
-    if (varible.current) {
-      varible.current.baseLeft = drag.current?.offsetLeft;
-      varible.current.baseTop = drag.current?.offsetTop;
+    const varibleDom = varible.current;
+    if (varibleDom) {
+      varibleDom.baseLeft = drag.current?.offsetLeft;
+      varibleDom.baseTop = drag.current?.offsetTop;
     }
   }, []);
 
   const listen = (e: MouseEvent) => {
-    if (varible.current) {
-      varible.current.currentLeft = e.offsetX;
-      varible.current.currentTop = e.offsetY;
+    const varibleDom = varible.current;
+    if (varibleDom) {
+      varibleDom.currentLeft = e.offsetX;
+      varibleDom.currentTop = e.offsetY;
     }
     document.body.addEventListener('mousemove', move);
     document.body.addEventListener('mouseup', () => {
