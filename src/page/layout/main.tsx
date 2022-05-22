@@ -5,7 +5,7 @@ import { Tooltip } from 'antd';
 import { useSelector } from 'react-redux';
 import { RootState } from '../../store';
 import DashBoard from '../dashboard';
-import { generateScaleLines } from './utils';
+import { generateScaleLines } from './helper';
 import { SVG_XMLNS, SCALE_STEP } from '../../index';
 import Move from '../../components/moveWapper';
 import Tool from '../tool';

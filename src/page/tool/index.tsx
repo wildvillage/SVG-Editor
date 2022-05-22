@@ -17,13 +17,13 @@ const iconProps = {
 
 const Tool: React.FC = () => {
   const dispatch = useDispatch();
-
   const line = useRef(null);
+  const rect = useRef(null);
+
   useDrag('line', line, {
     onDragStart: () => {},
   });
 
-  const rect = useRef(null);
   useDrag('rect', rect, {
     onDragStart: () => {},
   });
