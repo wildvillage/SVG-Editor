@@ -12,8 +12,8 @@ export const generateSelectorFrame = (selected: RenderItem | null) => {
         return {
           width: Math.abs(x1 - x2),
           height: Math.abs(y1 - y2),
-          x: x1,
-          y: y1,
+          x: Math.min(x1, x2),
+          y: Math.min(y1, y2),
         };
       default:
         return { width: 0, height: 0, x: 0, y: 0 };

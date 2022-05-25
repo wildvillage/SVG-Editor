@@ -99,12 +99,12 @@ function Dashboard() {
       >
         {render.map(({ id, type, attrs }) => {
           if (type === 'line') {
-            const { x1, y1, x2 } = attrs as App.Line;
+            const { x1, y1, x2, y2 } = attrs as App.Line;
             const rectAttrs = {
-              x: x1,
-              y: y1 - 10,
-              width: x2 - x1,
-              height: 20,
+              x: Math.min(x1, x2),
+              y: y1 === y2 ? y1 - 5 : Math.min(y1, y2),
+              width: Math.abs(x2 - x1),
+              height: Math.abs(y1 - y2) || 10,
               fill: 'transparent',
             };
             return (
