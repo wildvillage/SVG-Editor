@@ -1,4 +1,4 @@
-import { useRef, useMemo, useState, Fragment } from 'react';
+import { useRef, useMemo, useState, Fragment, useEffect } from 'react';
 import { useDashboardSize } from '../../utils';
 import { generateSplitLine } from '../layout/helper';
 import { useSelector, useDispatch } from 'react-redux';
@@ -17,7 +17,6 @@ function Dashboard() {
   const [currSelectedItem, setCurrSelectedItem] =
     useState<SelectorProps['selected']>(null);
   const dashboard = useRef<HTMLDivElement>(null);
-  const globalId = useRef<number>(1);
   const board = useRef(null);
   useDashboardSize(dashboard);
   const { render } = useSelector((state: RootState) => state.dashboard);
@@ -26,17 +25,22 @@ function Dashboard() {
   );
   const dispatch = useDispatch();
 
+  useEffect(() => {
+    if (render.length) {
+      setCurrSelectedItem(render.find((item) => item.id === currentForm.id)!);
+    }
+  }, [render]);
+
   useDrop(board, {
     onText: (text, e: any) => {
-      addSvgTag(text, e, globalId, render, setCurrSelectedItem, dispatch);
-      globalId.current++;
+      addSvgTag(text, e, nanoid(), render, setCurrSelectedItem, dispatch);
     },
   });
 
   useEventListener('click', (e: Event) => {
     const id = (e.target as SVGAElement).id;
     if (id) {
-      const t = render.find((item) => item.id === parseInt(id));
+      const t = render.find((item) => item.id === id);
       if (t) {
         setCurrSelectedItem(t);
         const { type, attrs } = t;

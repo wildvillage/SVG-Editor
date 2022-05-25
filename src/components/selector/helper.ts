@@ -5,7 +5,8 @@ export const generateSelectorFrame = (selected: RenderItem | null) => {
     const { type, attrs } = selected;
     switch (type) {
       case 'rect':
-        return attrs as App.Rect;
+        const { width, height, x, y } = attrs as App.Rect;
+        return { width, height, x, y };
       case 'line':
         const { x1, x2, y1, y2 } = attrs as App.Line;
         return {
