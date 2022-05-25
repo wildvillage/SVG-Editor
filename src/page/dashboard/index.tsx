@@ -1,5 +1,5 @@
 import { useRef, useMemo, useState, Fragment } from 'react';
-import { useDashboardSize, calcPosition } from '../../utils';
+import { useDashboardSize } from '../../utils';
 import { generateSplitLine } from '../layout/helper';
 import { useSelector, useDispatch } from 'react-redux';
 import { RootState } from '../../store';
@@ -9,18 +9,13 @@ import { useDrop, useEventListener } from 'ahooks';
 import { setCurrentForm, setSelector } from '../../store/tool';
 import { removeRenderItem } from '../../store/dashboard';
 import { addSvgTag } from './utils';
-import { SelectorProps } from './type';
+import Selector from '../../components/selector';
+import { SelectorProps } from '../../components/selector/type';
 import styles from './index.module.less';
 
-const defaultSelectorProps = {
-  width: 0,
-  height: 0,
-  x: 0,
-  y: 0,
-};
-
 function Dashboard() {
-  const [tagAttr, setTagAttr] = useState<SelectorProps>(defaultSelectorProps);
+  const [currSelectedItem, setCurrSelectedItem] =
+    useState<SelectorProps['selected']>(null);
   const dashboard = useRef<HTMLDivElement>(null);
   const globalId = useRef<number>(1);
   const board = useRef(null);
@@ -33,7 +28,7 @@ function Dashboard() {
 
   useDrop(board, {
     onText: (text, e: any) => {
-      addSvgTag(text, e, globalId, render, setTagAttr, dispatch);
+      addSvgTag(text, e, globalId, render, setCurrSelectedItem, dispatch);
       globalId.current++;
     },
   });
@@ -43,16 +38,10 @@ function Dashboard() {
     if (id) {
       const t = render.find((item) => item.id === parseInt(id));
       if (t) {
+        setCurrSelectedItem(t);
         const { type, attrs } = t;
 
         if (type === 'rect') {
-          const { x, y, width, height } = attrs as App.Rect;
-          setTagAttr({
-            width,
-            height,
-            x,
-            y,
-          });
           dispatch(
             setCurrentForm({
               id,
@@ -62,13 +51,6 @@ function Dashboard() {
           );
           dispatch(setSelector(true));
         } else if (type === 'line') {
-          const { x1, x2, y1, y2 } = attrs as App.Line;
-          setTagAttr({
-            width: Math.abs(x1 - x2),
-            height: Math.abs(y1 - y2),
-            x: x1,
-            y: y1,
-          });
           dispatch(
             setCurrentForm({
               id,
@@ -131,7 +113,7 @@ function Dashboard() {
             return <rect key={id} {...attrs} id={id + ''} />;
           }
         })}
-        {showSelector && <Selector {...tagAttr} />}
+        {showSelector && <Selector selected={currSelectedItem} />}
       </svg>
     </div>
   );
@@ -165,43 +147,5 @@ function SplitLine({ width, height }: { width: number; height: number }) {
     </svg>
   );
 }
-
-const Selector = (props: SelectorProps) => {
-  const { width, height, x, y } = props;
-  const tagAttr = {
-    width: width + 5,
-    height: height + 5,
-    x: x - 2.5,
-    y: y - 2.5,
-  };
-  const baseAttr = {
-    stroke: '#3366FF',
-    fill: '#3366FF',
-    width: '5',
-    height: '5',
-  };
-
-  return (
-    <g fill="transparent">
-      {/* 整体框选 */}
-      <rect
-        stroke="#3366FF"
-        fill="transparent"
-        strokeWidth="2.5"
-        {...tagAttr}
-      />
-      {/* 8个顶点 */}
-      <rect {...baseAttr} x={x - 5} y={y - 5} />
-      <rect {...baseAttr} x={x + width} y={y - 5} />
-      <rect {...baseAttr} x={x - 5} y={y + height} />
-      <rect {...baseAttr} x={x + width} y={y + height} />
-      <rect {...baseAttr} x={x + width / 2 - 2.5} y={y - 5} />
-      <rect {...baseAttr} x={x + width / 2 - 2.5} y={y + height} />
-      <rect {...baseAttr} x={x - 5} y={y + height / 2 - 2.5} />
-      <rect {...baseAttr} x={x + width} y={y + height / 2 - 2.5} />
-      {/* 画一个工具选项🤔 */}
-    </g>
-  );
-};
 
 export default Dashboard;
