@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useCallback } from 'react';
 import { ExpandOutlined } from '@ant-design/icons';
 import { lineSetting, rectSetting } from '../../settings/action';
 import { InputNumber, Form, Input, Tooltip } from 'antd';
@@ -11,6 +11,7 @@ import { addSvg } from '../../store/dashboard';
 import { SvgType } from '../../store/type';
 import styles from './index.module.less';
 
+type Position = 'top' | 'bottom' | 'middle';
 const setting = {
   line: lineSetting,
   rect: rectSetting,
@@ -31,6 +32,7 @@ const Slider: React.FC = () => {
   const dispatch = useDispatch();
 
   useUpdateEffect(() => {
+    // 当左侧变化时，需要进行通知视图更新；
     const { attrs, type } = currentForm;
     if (type === 'line') {
       // 说明当前变化的是line类型
@@ -49,54 +51,64 @@ const Slider: React.FC = () => {
     }
   }, [currentForm]);
 
-  const formChange = (form: any) => {
+  const formChange = (_form: any, position: Position) => {
     const geoForm = geometricForm.getFieldsValue();
     const notGeoForm = notGeometricForm.getFieldsValue();
     const { top, left } = positionForm.getFieldsValue();
-
     const { id, type } = currentForm;
-    const copy = Object.assign([], render);
+    const copy = [...render];
     const index = render.findIndex((item) => item.id === id);
     const { attrs } = render.find((item) => item.id === id) || { attrs: null };
-    if (type === 'line') {
-      if (form.top || form.left) {
-        if (attrs) {
-          const { x1, y1, x2, y2 } = attrs as App.Line; // 原来的
-          const chax2 = left - x1,
-            chay2 = top - y1;
-          copy.splice(index, 1, {
-            id,
-            type,
-            attrs: Object.assign({}, notGeoForm, {
-              x1: left,
-              y1: top,
-              x2: x2 + chax2,
-              y2: y2 + chay2,
-            }),
-          });
-        }
-      } else {
-        copy.splice(index, 1, {
-          id,
-          type,
-          attrs: Object.assign({}, geoForm, notGeoForm),
-        });
-      }
-    } else if (type === 'rect') {
-      if (form.top || form.left) {
-        copy.splice(index, 1, {
-          id,
-          type,
-          attrs: Object.assign({}, geoForm, notGeoForm, { x: left, y: top }),
-        });
-      } else {
-        copy.splice(index, 1, {
-          id,
-          type,
-          attrs: Object.assign({}, geoForm, notGeoForm),
-        });
-      }
-    }
+
+    const linetop = useCallback(() => {
+      const { x1, y1, x2, y2 } = attrs as App.Line; // 原来的
+      const chax2 = left - x1,
+        chay2 = top - y1;
+      copy.splice(index, 1, {
+        id,
+        type,
+        attrs: {
+          ...notGeoForm,
+          x1: left,
+          y1: top,
+          x2: x2 + chax2,
+          y2: y2 + chay2,
+        },
+      });
+    }, [attrs, copy, top, left]);
+
+    const linebottom = useCallback(() => {
+      copy.splice(index, 1, {
+        id,
+        type,
+        attrs: { ...geoForm, ...notGeoForm },
+      });
+    }, [copy, currentForm, geoForm, notGeoForm]);
+
+    const recttop = () => {
+      copy.splice(index, 1, {
+        id,
+        type,
+        attrs: { ...geoForm, ...notGeoForm, x: left, y: top },
+      });
+    };
+
+    const rectbottom = () => {
+      copy.splice(index, 1, {
+        id,
+        type,
+        attrs: { ...geoForm, ...notGeoForm },
+      });
+    };
+
+    type === 'line'
+      ? position === 'top'
+        ? linetop()
+        : linebottom()
+      : position === 'top'
+      ? recttop()
+      : rectbottom();
+
     dispatch(addSvg(copy));
   };
 
@@ -116,7 +128,7 @@ const Slider: React.FC = () => {
                 size="small"
                 labelCol={{ span: 8, offset: 0 }}
                 colon={false}
-                onValuesChange={formChange}
+                onValuesChange={(form) => formChange(form, 'top')}
                 form={positionForm}
               >
                 {Object.keys(position).map((key) => {
@@ -138,7 +150,7 @@ const Slider: React.FC = () => {
                 size="small"
                 labelCol={{ span: 8, offset: 0 }}
                 colon={false}
-                onValuesChange={formChange}
+                onValuesChange={(form) => formChange(form, 'middle')}
                 form={geometricForm}
               >
                 {Object.keys(geometric).map((key) => {
@@ -160,7 +172,7 @@ const Slider: React.FC = () => {
                 size="small"
                 labelCol={{ span: 8, offset: 0 }}
                 colon={false}
-                onChange={formChange}
+                onChange={(form) => formChange(form, 'bottom')}
                 form={notGeometricForm}
               >
                 {Object.keys(notGeometric).map((key) => {
