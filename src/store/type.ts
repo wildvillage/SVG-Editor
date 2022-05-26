@@ -8,7 +8,7 @@ export type Tool = {
 export type SvgType = 'line' | 'circle' | 'rect';
 
 export type RenderItem = {
-  id: number;
+  id: string;
   type: SvgType;
   attrs: App.Line | App.Rect;
 };
