@@ -73,7 +73,7 @@ function Dashboard() {
     const { code } = e;
     // 按下删除键并且当前选中框存在时，才执行remove操作
     if (code === 'Backspace' && showSelector && e.target === document.body) {
-      dispatch(removeRenderItem(Number(currentForm.id)));
+      dispatch(removeRenderItem(currentForm.id));
       dispatch(setSelector(false));
     }
   });
