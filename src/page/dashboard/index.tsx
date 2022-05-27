@@ -7,7 +7,7 @@ import { SVG_XMLNS, SCALE_STEP } from '../../index';
 import { nanoid } from 'nanoid';
 import { useDrop, useEventListener } from 'ahooks';
 import { setCurrentForm, setSelector } from '../../store/tool';
-import { removeRenderItem } from '../../store/dashboard';
+import { remove } from '../../store/dashboard';
 import { addSvgTag } from './utils';
 import Selector from '../../components/selector';
 import { SelectorProps } from '../../components/selector/type';
@@ -73,7 +73,7 @@ function Dashboard() {
     const { code } = e;
     // 按下删除键并且当前选中框存在时，才执行remove操作
     if (code === 'Backspace' && showSelector && e.target === document.body) {
-      dispatch(removeRenderItem(currentForm.id));
+      dispatch(remove(currentForm.id));
       dispatch(setSelector(false));
     }
   });

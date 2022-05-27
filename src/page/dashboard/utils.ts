@@ -1,6 +1,6 @@
 import { Dispatch, SetStateAction } from 'react';
 import { Dispatch as ReduxDispatch, AnyAction } from '@reduxjs/toolkit';
-import { addSvg } from '../../store/dashboard';
+import { add } from '../../store/dashboard';
 import { setCurrentForm, setSelector } from '../../store/tool';
 import { RenderItem } from '../../store/type';
 import { lineSetting, rectSetting } from '../../settings/action';
@@ -42,14 +42,11 @@ const addLine = (
     _default.length
   );
   dispatch(
-    addSvg([
-      ...render,
-      {
-        id: tagId,
-        type: 'line',
-        attrs: { x1, y1, x2, y2, stroke: _default.stroke },
-      },
-    ])
+    add({
+      id: tagId,
+      type: 'line',
+      attrs: { x1, y1, x2, y2, stroke: _default.stroke },
+    })
   );
   dispatch(
     setCurrentForm({
@@ -76,14 +73,11 @@ const addRect = (
 ) => {
   const { default: _default } = rectSetting;
   dispatch(
-    addSvg([
-      ...render,
-      {
-        id: tagId,
-        type: 'rect',
-        attrs: { ..._default, x: event.offsetX, y: event.offsetY },
-      },
-    ])
+    add({
+      id: tagId,
+      type: 'rect',
+      attrs: { ..._default, x: event.offsetX, y: event.offsetY },
+    })
   );
   dispatch(
     setCurrentForm({
