@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState } from 'react';
 import { ExpandOutlined } from '@ant-design/icons';
 import { lineSetting, rectSetting } from '../../settings/action';
 import { InputNumber, Form, Input, Tooltip } from 'antd';
@@ -7,7 +7,7 @@ import Guide from '../../components/guide';
 import { useSelector, useDispatch } from 'react-redux';
 import { RootState } from '../../store';
 import { useUpdateEffect } from 'ahooks';
-import { addSvg } from '../../store/dashboard';
+import { replace } from '../../store/dashboard';
 import { SvgType } from '../../store/type';
 import styles from './index.module.less';
 
@@ -41,14 +41,14 @@ const Slider: React.FC = () => {
       notGeometricForm.setFieldsValue(attrs);
       geometricForm.setFieldsValue(attrs);
       positionForm.setFieldsValue({ top: y1, left: x1 });
-    } else if (type === 'rect') {
-      // 说明当前变化的是rect类型
-      const { x, y } = attrs as App.Rect;
-      setSvgType('rect');
-      notGeometricForm.setFieldsValue(attrs);
-      geometricForm.setFieldsValue(attrs);
-      positionForm.setFieldsValue({ top: y, left: x });
+      return;
     }
+    // 说明当前变化的是rect类型
+    const { x, y } = attrs as App.Rect;
+    setSvgType('rect');
+    notGeometricForm.setFieldsValue(attrs);
+    geometricForm.setFieldsValue(attrs);
+    positionForm.setFieldsValue({ top: y, left: x });
   }, [currentForm]);
 
   const formChange = (_form: any, position: Position) => {
@@ -56,49 +56,68 @@ const Slider: React.FC = () => {
     const notGeoForm = notGeometricForm.getFieldsValue();
     const { top, left } = positionForm.getFieldsValue();
     const { id, type } = currentForm;
-    const copy = [...render];
     const index = render.findIndex((item) => item.id === id);
     const { attrs } = render.find((item) => item.id === id) || { attrs: null };
 
-    const linetop = useCallback(() => {
+    const linetop = () => {
       const { x1, y1, x2, y2 } = attrs as App.Line; // 原来的
       const chax2 = left - x1,
         chay2 = top - y1;
-      copy.splice(index, 1, {
-        id,
-        type,
-        attrs: {
-          ...notGeoForm,
-          x1: left,
-          y1: top,
-          x2: x2 + chax2,
-          y2: y2 + chay2,
-        },
-      });
-    }, [attrs, copy, top, left]);
+      dispatch(
+        replace({
+          index,
+          item: {
+            id,
+            type,
+            attrs: {
+              ...notGeoForm,
+              x1: left,
+              y1: top,
+              x2: x2 + chax2,
+              y2: y2 + chay2,
+            },
+          },
+        })
+      );
+    };
 
-    const linebottom = useCallback(() => {
-      copy.splice(index, 1, {
-        id,
-        type,
-        attrs: { ...geoForm, ...notGeoForm },
-      });
-    }, [copy, currentForm, geoForm, notGeoForm]);
+    const linebottom = () => {
+      dispatch(
+        replace({
+          index,
+          item: {
+            id,
+            type,
+            attrs: { ...geoForm, ...notGeoForm },
+          },
+        })
+      );
+    };
 
     const recttop = () => {
-      copy.splice(index, 1, {
-        id,
-        type,
-        attrs: { ...geoForm, ...notGeoForm, x: left, y: top },
-      });
+      dispatch(
+        replace({
+          index,
+          item: {
+            id,
+            type,
+            attrs: { ...geoForm, ...notGeoForm, x: left, y: top },
+          },
+        })
+      );
     };
 
     const rectbottom = () => {
-      copy.splice(index, 1, {
-        id,
-        type,
-        attrs: { ...geoForm, ...notGeoForm },
-      });
+      dispatch(
+        replace({
+          index,
+          item: {
+            id,
+            type,
+            attrs: { ...geoForm, ...notGeoForm },
+          },
+        })
+      );
     };
 
     type === 'line'
@@ -108,8 +127,6 @@ const Slider: React.FC = () => {
       : position === 'top'
       ? recttop()
       : rectbottom();
-
-    dispatch(addSvg(copy));
   };
 
   return (

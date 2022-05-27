@@ -9,18 +9,6 @@ export const dashboardSlice = createSlice({
   name: 'dashboard',
   initialState,
   reducers: {
-    setLine(state, { payload }: PayloadAction<DashBoard['line']>) {
-      state.line = payload;
-    },
-    setRect(state, { payload }: PayloadAction<DashBoard['rect']>) {
-      state.rect = payload;
-    },
-    addSvg(state, { payload }: PayloadAction<DashBoard['render']>) {
-      state.render = payload;
-    },
-    removeRenderItem(state, { payload }: PayloadAction<string>) {
-      state.render = state.render.filter((r) => r.id !== payload);
-    },
     reset(state, {}: PayloadAction<DashBoard['render']>) {
       state.render = [];
     },
@@ -46,16 +34,6 @@ export const dashboardSlice = createSlice({
   },
 });
 
-export const {
-  setRect,
-  setLine,
-  addSvg,
-  removeRenderItem,
-  reset,
-  add,
-  remove,
-  replace,
-  pop,
-} = dashboardSlice.actions;
+export const { reset, add, remove, replace, pop } = dashboardSlice.actions;
 
 export default dashboardSlice.reducer;
