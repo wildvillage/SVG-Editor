@@ -18,7 +18,7 @@ export const dashboardSlice = createSlice({
     addSvg(state, { payload }: PayloadAction<DashBoard['render']>) {
       state.render = payload;
     },
-    removeRenderItem(state, { payload }: PayloadAction<number>) {
+    removeRenderItem(state, { payload }: PayloadAction<string>) {
       state.render = state.render.filter((r) => r.id !== payload);
     },
     reset(state, {}: PayloadAction<DashBoard['render']>) {
@@ -27,7 +27,7 @@ export const dashboardSlice = createSlice({
     add(state, { payload }: PayloadAction<RenderItem>) {
       state.render = [...state.render, payload];
     },
-    remove(state, { payload }: PayloadAction<number>) {
+    remove(state, { payload }: PayloadAction<string>) {
       state.render = state.render.filter((r) => r.id !== payload);
     },
     replace(

@@ -4,7 +4,7 @@ import { Tool } from './type';
 const initialState: Tool = {
   showSplitLine: true,
   currentForm: {
-    id: 1,
+    id: '',
     attrs: {
       x1: 10,
       x2: 10,
