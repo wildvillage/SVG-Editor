@@ -8,21 +8,18 @@ import { nanoid } from 'nanoid';
 import { useDrop, useEventListener } from 'ahooks';
 import { setCurrentForm, setSelector } from '../../store/tool';
 import { remove } from '../../store/dashboard';
-import { addSvgTag } from './utils';
+import { addSvgTag, calcLineRectPosition } from './utils';
 import Selector from '../../components/selector';
 import { SelectorProps } from '../../components/selector/type';
 import styles from './index.module.less';
 
 function Dashboard() {
-  const [currSelectedItem, setCurrSelectedItem] =
-    useState<SelectorProps['selected']>(null);
+  const [currSelectedItem, setCurrSelectedItem] = useState<SelectorProps['selected']>(null);
   const dashboard = useRef<HTMLDivElement>(null);
   const board = useRef(null);
   useDashboardSize(dashboard);
   const { render } = useSelector((state: RootState) => state.dashboard);
-  const { showSplitLine, showSelector, currentForm } = useSelector(
-    (state: RootState) => state.tool
-  );
+  const { showSplitLine, showSelector, currentForm } = useSelector((state: RootState) => state.tool);
   const dispatch = useDispatch();
 
   useEffect(() => {
@@ -100,17 +97,19 @@ function Dashboard() {
         {render.map(({ id, type, attrs }) => {
           if (type === 'line') {
             const { x1, y1, x2, y2 } = attrs as App.Line;
+            const { rotate, rotateCenter, realWidth } = calcLineRectPosition(x1, x2, y1, y2);
             const rectAttrs = {
-              x: Math.min(x1, x2),
-              y: y1 === y2 ? y1 - 5 : Math.min(y1, y2),
-              width: Math.abs(x2 - x1),
-              height: Math.abs(y1 - y2) || 10,
+              x: x1,
+              y: y1 - 5,
+              width: realWidth,
+              height: 10,
               fill: 'transparent',
+              transform: `rotate(${rotate} ${rotateCenter})`,
             };
             return (
               <Fragment key={id}>
-                <line {...attrs} id={id + ''} />
-                <rect id={id + ''} {...rectAttrs} />
+                <line {...attrs} id={id} />
+                <rect id={id} {...rectAttrs} />
               </Fragment>
             );
           } else {
@@ -127,18 +126,10 @@ function SplitLine({ width, height }: { width: number; height: number }) {
   const splitLine = useMemo(() => {
     if (height && width) {
       const vertical = Math.ceil(width / 100);
-      const verticalLine = generateSplitLine(
-        vertical * 5,
-        SCALE_STEP,
-        'vertical'
-      );
+      const verticalLine = generateSplitLine(vertical * 5, SCALE_STEP, 'vertical');
 
       const horizontal = Math.ceil(height / 100);
-      const horizontalLine = generateSplitLine(
-        horizontal * 5,
-        SCALE_STEP,
-        'horizontal'
-      );
+      const horizontalLine = generateSplitLine(horizontal * 5, SCALE_STEP, 'horizontal');
       return [...verticalLine, ...horizontalLine];
     }
   }, [height, width]);
