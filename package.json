@@ -1,7 +1,25 @@
 {
   "name": "svg-editor",
   "private": true,
-  "version": "0.0.0",
+  "version": "0.0.1",
+  "homepage": "https://wildvillage.github.io/SVG-Editor",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/wildvillage/SVG-Editor.git"
+  },
+  "bugs": {
+    "url": "https://github.com/wildvillage/SVG-Editor/issues"
+  },
+  "maintainers": [
+    {
+      "name": "wildvillage",
+      "email": "wysmusic@163.com"
+    },
+    {
+      "name": "Story",
+      "email": "songxiaopeng2021@163.com"
+    }
+  ],
   "scripts": {
     "dev": "vite --host",
     "build": "tsc && vite build",
